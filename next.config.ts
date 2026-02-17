@@ -61,6 +61,20 @@ const nextConfig: NextConfig = {
             value: "strict-origin-when-cross-origin",
           },
           {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https://*.amazonaws.com https://lh3.googleusercontent.com",
+              "font-src 'self'",
+              "connect-src 'self' https://api.anthropic.com",
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join("; "),
+          },
+          {
             key: "Permissions-Policy",
             value:
               "camera=(), microphone=(), geolocation=(self), payment=(self)",

@@ -1,5 +1,5 @@
 import type { Config } from "jest";
-import nextJest from "next/jest";
+import nextJest from "next/jest.js";
 
 const createJestConfig = nextJest({
   dir: "./",
@@ -7,7 +7,7 @@ const createJestConfig = nextJest({
 
 const config: Config = {
   testEnvironment: "jsdom",
-  setupFilesAfterSetup: ["<rootDir>/tests/setup.ts"],
+  setupFilesAfterEnv: ["<rootDir>/tests/setup.ts"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
@@ -26,7 +26,7 @@ const config: Config = {
     "!src/**/error.tsx",
     "!src/types/**",
   ],
-  coverageThresholds: {
+  coverageThreshold: {
     global: {
       branches: 70,
       functions: 75,

@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 // ── Rate limiting (in-memory for edge, use Redis in production) ──
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+const MAX_RATE_LIMIT_ENTRIES = 10_000;
+let lastCleanup = Date.now();
 
 const RATE_LIMITS: Record<string, { max: number; windowMs: number }> = {
+  "/api/chat": { max: 20, windowMs: 60_000 },
+  "/api/careers/apply": { max: 5, windowMs: 60_000 },
   "/api/v1/auth": { max: 5, windowMs: 60_000 },
   "/api/v1/upload": { max: 10, windowMs: 60_000 },
   "/api/v1": { max: 100, windowMs: 60_000 },
@@ -16,11 +20,29 @@ function getRateLimit(pathname: string) {
   return null;
 }
 
+function cleanupExpiredEntries() {
+  const now = Date.now();
+  if (now - lastCleanup < 60_000) return;
+  lastCleanup = now;
+
+  for (const [key, entry] of rateLimitStore) {
+    if (now > entry.resetAt) {
+      rateLimitStore.delete(key);
+    }
+  }
+
+  if (rateLimitStore.size > MAX_RATE_LIMIT_ENTRIES) {
+    rateLimitStore.clear();
+  }
+}
+
 function checkRateLimit(
   key: string,
   max: number,
   windowMs: number
 ): { allowed: boolean; remaining: number; resetAt: number } {
+  cleanupExpiredEntries();
+
   const now = Date.now();
   const entry = rateLimitStore.get(key);
 

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 /**
  * Cron: Send daily job alert emails
@@ -11,28 +12,11 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     // TODO: Replace with actual implementation once database + email are set up
-    // const alerts = await prisma.jobAlert.findMany({
-    //   where: {
-    //     isActive: true,
-    //     frequency: "DAILY",
-    //   },
-    //   include: { user: true },
-    // });
-    //
-    // for (const alert of alerts) {
-    //   const matchingJobs = await findMatchingJobs(alert.searchCriteria, alert.lastSentAt);
-    //   if (matchingJobs.length > 0) {
-    //     await emailQueue.add("job-alert", {
-    //       to: alert.user.email,
-    //       template: "job-alert",
-    //       data: { jobs: matchingJobs, alertId: alert.id },
-    //     });
-    //     await prisma.jobAlert.update({
-    //       where: { id: alert.id },
-    //       data: { lastSentAt: new Date() },
-    //     });
-    //   }
-    // }
+
+    logger.info("Cron: send-job-alerts completed", {
+      endpoint: "/api/cron/send-job-alerts",
+      metadata: { alertsProcessed: 0 },
+    });
 
     return NextResponse.json({
       success: true,
@@ -40,7 +24,10 @@ export async function GET() {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Cron: send-job-alerts failed", error);
+    logger.error("Cron: send-job-alerts failed", {
+      endpoint: "/api/cron/send-job-alerts",
+      metadata: { error: error instanceof Error ? error.message : "Unknown error" },
+    });
     return NextResponse.json(
       { success: false, error: "Failed to send job alerts" },
       { status: 500 }

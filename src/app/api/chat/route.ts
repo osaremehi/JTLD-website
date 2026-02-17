@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { chatRequestSchema } from "@/lib/validations";
+import { logger } from "@/lib/logger";
+import { formatError } from "@/lib/errors";
 
 /* ------------------------------------------------------------------ */
 /*  JTLD Platform Knowledge Base                                       */
@@ -208,30 +211,30 @@ ${KNOWLEDGE_BASE}`;
 /*  Route handler                                                      */
 /* ------------------------------------------------------------------ */
 
-interface ChatMessage {
-  role: "user" | "assistant";
-  content: string;
-}
-
 export async function POST(req: NextRequest) {
+  const requestId = req.headers.get("x-request-id") || crypto.randomUUID();
+
   try {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
+      logger.error("Anthropic API key not configured", { requestId, endpoint: "/api/chat" });
       return NextResponse.json(
         { reply: "I'm having trouble connecting right now. Please try again later or contact us at info@jtldinc.com.", suggestConsultation: false },
-        { status: 200 },
+        { status: 503 },
       );
     }
 
     const body = await req.json();
-    const messages: ChatMessage[] = body.messages ?? [];
+    const parsed = chatRequestSchema.safeParse(body);
 
-    if (!messages.length) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { reply: "Hi there! I'm Tosh, your virtual assistant. How can I help you today?", suggestConsultation: false },
-        { status: 200 },
+        { error: { code: "VALIDATION_ERROR", message: "Invalid request", details: parsed.error.flatten() } },
+        { status: 400 },
       );
     }
+
+    const { messages } = parsed.data;
 
     const client = new Anthropic({ apiKey });
 
@@ -250,10 +253,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ reply, suggestConsultation });
   } catch (error) {
-    console.error("Chat API error:", error);
+    logger.error("Chat API error", {
+      requestId,
+      endpoint: "/api/chat",
+      metadata: { error: error instanceof Error ? error.message : "Unknown error" },
+    });
     return NextResponse.json(
-      { reply: "I'm having a little trouble right now. You can reach our team at info@jtldinc.com or call (416) 555-1234.", suggestConsultation: false },
-      { status: 200 },
+      formatError(error, requestId),
+      { status: 500 },
     );
   }
 }

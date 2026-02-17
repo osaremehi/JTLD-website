@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /candidate/
+Disallow: /employer/
+Disallow: /recruiter/
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://jtldinc.com/sitemap.xml

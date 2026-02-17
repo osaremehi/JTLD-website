@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 /**
  * Cron: Send timesheet submission reminders
@@ -10,33 +11,11 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     // TODO: Replace with actual implementation
-    // const currentWeekStart = getWeekStart(new Date());
-    //
-    // const contractorsWithoutTimesheets = await prisma.contract.findMany({
-    //   where: {
-    //     status: "ACTIVE",
-    //     timesheets: {
-    //       none: {
-    //         weekStarting: currentWeekStart,
-    //       },
-    //     },
-    //   },
-    //   include: {
-    //     candidate: { include: { user: true } },
-    //   },
-    // });
-    //
-    // for (const contract of contractorsWithoutTimesheets) {
-    //   await emailQueue.add("timesheet-reminder", {
-    //     to: contract.candidate.user.email,
-    //     template: "timesheet-reminder",
-    //     data: {
-    //       userName: contract.candidate.user.firstName,
-    //       weekStarting: currentWeekStart,
-    //       contractId: contract.id,
-    //     },
-    //   });
-    // }
+
+    logger.info("Cron: timesheet-reminders completed", {
+      endpoint: "/api/cron/timesheet-reminders",
+      metadata: { remindersSent: 0 },
+    });
 
     return NextResponse.json({
       success: true,
@@ -44,7 +23,10 @@ export async function GET() {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Cron: timesheet-reminders failed", error);
+    logger.error("Cron: timesheet-reminders failed", {
+      endpoint: "/api/cron/timesheet-reminders",
+      metadata: { error: error instanceof Error ? error.message : "Unknown error" },
+    });
     return NextResponse.json(
       { success: false, error: "Failed to send timesheet reminders" },
       { status: 500 }

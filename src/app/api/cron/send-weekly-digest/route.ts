@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 /**
  * Cron: Send weekly job digest emails
@@ -10,24 +11,11 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     // TODO: Replace with actual implementation
-    // const candidates = await prisma.jobAlert.findMany({
-    //   where: {
-    //     isActive: true,
-    //     frequency: "WEEKLY",
-    //   },
-    //   include: { user: { include: { candidateProfile: true } } },
-    // });
-    //
-    // for (const alert of candidates) {
-    //   const jobs = await findMatchingJobs(alert.searchCriteria, alert.lastSentAt);
-    //   if (jobs.length > 0) {
-    //     await emailQueue.add("weekly-digest", {
-    //       to: alert.user.email,
-    //       template: "weekly-digest",
-    //       data: { jobs, userName: alert.user.firstName },
-    //     });
-    //   }
-    // }
+
+    logger.info("Cron: send-weekly-digest completed", {
+      endpoint: "/api/cron/send-weekly-digest",
+      metadata: { digestsSent: 0 },
+    });
 
     return NextResponse.json({
       success: true,
@@ -35,7 +23,10 @@ export async function GET() {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Cron: send-weekly-digest failed", error);
+    logger.error("Cron: send-weekly-digest failed", {
+      endpoint: "/api/cron/send-weekly-digest",
+      metadata: { error: error instanceof Error ? error.message : "Unknown error" },
+    });
     return NextResponse.json(
       { success: false, error: "Failed to send weekly digests" },
       { status: 500 }

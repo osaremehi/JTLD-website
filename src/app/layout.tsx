@@ -46,6 +46,55 @@ export default function RootLayout({
             __html: `(function(){try{var s=localStorage.getItem('jtld-theme');var d=s==='dark'||(s!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches);if(d)document.documentElement.classList.add('dark')}catch(e){}})();`,
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "JTLD Consulting Inc",
+              url: "https://jtldinc.com",
+              logo: "https://jtldinc.com/logo.svg",
+              description:
+                "Canadian business consulting and technology services firm delivering strategic consulting, managed IT, AI solutions, data analytics, and cloud infrastructure.",
+              foundingDate: "2015",
+              areaServed: "CA",
+              contactPoint: [
+                {
+                  "@type": "ContactPoint",
+                  telephone: "+1-416-555-1234",
+                  contactType: "sales",
+                  email: "info@jtldinc.com",
+                  areaServed: "CA",
+                },
+              ],
+              address: [
+                {
+                  "@type": "PostalAddress",
+                  streetAddress: "100 King Street West, Suite 5600",
+                  addressLocality: "Toronto",
+                  addressRegion: "ON",
+                  addressCountry: "CA",
+                },
+                {
+                  "@type": "PostalAddress",
+                  streetAddress: "525 8th Avenue SW, Suite 2500",
+                  addressLocality: "Calgary",
+                  addressRegion: "AB",
+                  addressCountry: "CA",
+                },
+                {
+                  "@type": "PostalAddress",
+                  streetAddress: "1055 West Georgia Street, Suite 1500",
+                  addressLocality: "Vancouver",
+                  addressRegion: "BC",
+                  addressCountry: "CA",
+                },
+              ],
+              sameAs: [],
+            }),
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
