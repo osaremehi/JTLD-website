@@ -1,0 +1,104 @@
+{
+  "name": "JD Consulting Logo",
+  "format": "svg-json",
+  "viewBox": "0 0 800 850",
+  "width": 800,
+  "height": 850,
+  "background": "#ececec",
+  "elements": [
+    {
+      "type": "rect",
+      "x": 0,
+      "y": 0,
+      "width": 800,
+      "height": 850,
+      "fill": "#ececec"
+    },
+    {
+      "type": "line",
+      "name": "frame-left",
+      "x1": 100,
+      "y1": 50,
+      "x2": 100,
+      "y2": 650,
+      "stroke": "#111111",
+      "strokeWidth": 8,
+      "strokeLinecap": "butt"
+    },
+    {
+      "type": "line",
+      "name": "frame-bottom",
+      "x1": 100,
+      "y1": 650,
+      "x2": 490,
+      "y2": 650,
+      "stroke": "#111111",
+      "strokeWidth": 8,
+      "strokeLinecap": "butt"
+    },
+    {
+      "type": "line",
+      "name": "frame-right",
+      "x1": 700,
+      "y1": 50,
+      "x2": 700,
+      "y2": 650,
+      "stroke": "#111111",
+      "strokeWidth": 8,
+      "strokeLinecap": "butt"
+    },
+    {
+      "type": "line",
+      "name": "frame-top",
+      "x1": 310,
+      "y1": 50,
+      "x2": 700,
+      "y2": 50,
+      "stroke": "#111111",
+      "strokeWidth": 8,
+      "strokeLinecap": "butt"
+    },
+    {
+      "type": "path",
+      "name": "J",
+      "d": "M210 160 L330 160 L300 160 L300 400 Q300 460 255 492 Q210 525 188 485",
+      "fill": "none",
+      "stroke": "#111111",
+      "strokeWidth": 20,
+      "strokeLinecap": "round",
+      "strokeLinejoin": "round"
+    },
+    {
+      "type": "line",
+      "name": "crossbar",
+      "x1": 293,
+      "y1": 390,
+      "x2": 420,
+      "y2": 390,
+      "stroke": "#111111",
+      "strokeWidth": 18,
+      "strokeLinecap": "butt"
+    },
+    {
+      "type": "path",
+      "name": "D",
+      "d": "M420 160 L490 160 Q590 160 590 350 Q590 540 490 540 L420 540 Z",
+      "fill": "none",
+      "stroke": "#111111",
+      "strokeWidth": 20,
+      "strokeLinejoin": "round"
+    },
+    {
+      "type": "text",
+      "name": "Consulting",
+      "value": "Consulting",
+      "x": 400,
+      "y": 780,
+      "fontFamily": "Book Antiqua, Palatino, Palatino Linotype, serif",
+      "fontSize": 72,
+      "letterSpacing": 12,
+      "textAnchor": "middle",
+      "fill": "#111111"
+    }
+  ]
+}

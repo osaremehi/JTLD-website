@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 260" fill="none">
+  <!-- Partial rectangular frame - bottom-left corner -->
+  <path d="M20 20 L20 195 L150 195" stroke="#1a1a1a" stroke-width="3" fill="none" stroke-linecap="square"/>
+  <!-- Partial rectangular frame - top-right corner -->
+  <path d="M80 20 L220 20 L220 195" stroke="#1a1a1a" stroke-width="3" fill="none" stroke-linecap="square"/>
+
+  <!-- JTLD Monogram -->
+  <g transform="translate(120, 107)">
+    <!-- J with hook curving left -->
+    <path d="M-40 -45 L-40 20 Q-40 42 -55 47 Q-62 49 -67 44"
+          stroke="#1a1a1a" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- J top serif -->
+    <line x1="-52" y1="-45" x2="-28" y2="-45" stroke="#1a1a1a" stroke-width="7" stroke-linecap="round"/>
+
+    <!-- Shared horizontal bar connecting J-L to D -->
+    <line x1="-40" y1="20" x2="-5" y2="20" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- D vertical stem -->
+    <line x1="-5" y1="-45" x2="-5" y2="47" stroke="#1a1a1a" stroke-width="7" stroke-linecap="round"/>
+    <!-- D curve -->
+    <path d="M-5 -45 L15 -45 Q60 -45 60 0 Q60 47 15 47 L-5 47"
+          stroke="#1a1a1a" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Consulting text -->
+  <text x="120" y="240" font-family="Georgia, 'Times New Roman', serif" font-size="24" fill="#1a1a1a" text-anchor="middle" letter-spacing="4">Consulting</text>
+</svg>

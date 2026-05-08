@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-white text-gray-800 dark:bg-navy-950 dark:text-gray-200;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-6 py-3 bg-navy-800 text-white
+           rounded-lg font-semibold transition-all hover:bg-navy-700
+           hover:-translate-y-0.5 dark:bg-gold-400 dark:text-navy-950
+           dark:hover:bg-gold-300;
+  }
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-6 py-3 border-2 border-navy-800
+           text-navy-800 rounded-lg font-semibold transition-all
+           hover:bg-navy-800 hover:text-white
+           dark:border-gray-400 dark:text-gray-300
+           dark:hover:bg-gray-700 dark:hover:text-white;
+  }
+  .section-eyebrow {
+    @apply text-sm font-semibold uppercase tracking-wider text-gold-500
+           mb-2;
+  }
+  .section-title {
+    @apply text-3xl md:text-4xl font-extrabold text-navy-900
+           dark:text-white mb-4;
+    font-family: theme('fontFamily.serif');
+  }
+  .section-subtitle {
+    @apply text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-base
+           leading-relaxed;
+  }
+}
+
+/* Fade-up animation */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
