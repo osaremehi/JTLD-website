@@ -79,6 +79,28 @@ const NAV_ITEMS: NavItem[] = [
   },
   { label: 'Blog', href: '/blog' },
   {
+    label: 'Careers',
+    href: '/careers',
+    mega: [
+      {
+        heading: 'Opportunities',
+        links: [
+          { label: 'View Open Positions', href: '/careers' },
+          { label: 'Become a Consultant', href: '/careers' },
+          { label: 'Why Join JTLD', href: '/careers' },
+        ],
+      },
+      {
+        heading: 'Candidate Portal',
+        links: [
+          { label: 'Create Your Profile', href: '/careers/signup' },
+          { label: 'Sign In', href: '/careers/login' },
+          { label: 'My Profile & Resumes', href: '/careers/profile' },
+        ],
+      },
+    ],
+  },
+  {
     label: 'Who We Are',
     href: '/about',
     mega: [

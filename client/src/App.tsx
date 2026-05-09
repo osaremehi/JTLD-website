@@ -14,6 +14,10 @@ import AdminLayout from '@/components/admin/AdminLayout'
 import ServicesPage from '@/pages/ServicesPage'
 import AboutPage from '@/pages/AboutPage'
 import IndustriesPage from '@/pages/IndustriesPage'
+import CareersPage from '@/pages/CareersPage'
+import CareersLoginPage from '@/pages/careers/CareersLoginPage'
+import CareersSignupPage from '@/pages/careers/CareersSignupPage'
+import CareersProfilePage from '@/pages/careers/CareersProfilePage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -35,6 +39,10 @@ export default function App() {
       <Route path="/services" element={<><Navbar /><ServicesPage /><Footer /></>} />
       <Route path="/about" element={<><Navbar /><AboutPage /><Footer /></>} />
       <Route path="/industries" element={<><Navbar /><IndustriesPage /><Footer /></>} />
+      <Route path="/careers" element={<><Navbar /><CareersPage /><Footer /></>} />
+      <Route path="/careers/login" element={<CareersLoginPage />} />
+      <Route path="/careers/signup" element={<CareersSignupPage />} />
+      <Route path="/careers/profile" element={<CareersProfilePage />} />
       <Route path="/blog" element={<><Navbar /><BlogPage /><Footer /></>} />
       <Route path="/blog/:slug" element={<><Navbar /><BlogPostPage /><Footer /></>} />
       <Route path="/login" element={<LoginPage />} />
