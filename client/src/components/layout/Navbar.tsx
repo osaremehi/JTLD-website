@@ -7,26 +7,26 @@ import ThemeToggle from './ThemeToggle'
 const NAV_ITEMS = [
   {
     label: 'What We Do',
-    href: '/#services',
+    href: '/services',
     dropdown: [
-      { label: 'IT Strategy & Architecture', href: '/#services' },
-      { label: 'Project & Change Management', href: '/#services' },
-      { label: 'Software Development', href: '/#services' },
-      { label: 'Cloud & Infrastructure', href: '/#services' },
+      { label: 'IT Strategy & Architecture', href: '/services' },
+      { label: 'Project & Change Management', href: '/services' },
+      { label: 'Software Development', href: '/services' },
+      { label: 'Cloud & Infrastructure', href: '/services' },
     ],
   },
   {
     label: 'Industries',
-    href: '/#industries',
+    href: '/industries',
     dropdown: [
-      { label: 'Government & Public Sector', href: '/#industries' },
-      { label: 'Financial Services', href: '/#industries' },
-      { label: 'Energy & Resources', href: '/#industries' },
-      { label: 'Healthcare', href: '/#industries' },
+      { label: 'Government & Public Sector', href: '/industries' },
+      { label: 'Financial Services', href: '/industries' },
+      { label: 'Energy & Resources', href: '/industries' },
+      { label: 'Healthcare', href: '/industries' },
     ],
   },
   { label: 'Blog', href: '/blog' },
-  { label: 'Who We Are', href: '/#about' },
+  { label: 'Who We Are', href: '/about' },
 ]
 
 export default function Navbar() {

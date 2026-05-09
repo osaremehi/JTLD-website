@@ -11,6 +11,9 @@ import DashboardPage from '@/pages/admin/DashboardPage'
 import InquiriesPage from '@/pages/admin/InquiriesPage'
 import BlogEditorPage from '@/pages/admin/BlogEditorPage'
 import AdminLayout from '@/components/admin/AdminLayout'
+import ServicesPage from '@/pages/ServicesPage'
+import AboutPage from '@/pages/AboutPage'
+import IndustriesPage from '@/pages/IndustriesPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -29,6 +32,9 @@ export default function App() {
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<><Navbar /><HomePage /><Footer /></>} />
+      <Route path="/services" element={<><Navbar /><ServicesPage /><Footer /></>} />
+      <Route path="/about" element={<><Navbar /><AboutPage /><Footer /></>} />
+      <Route path="/industries" element={<><Navbar /><IndustriesPage /><Footer /></>} />
       <Route path="/blog" element={<><Navbar /><BlogPage /><Footer /></>} />
       <Route path="/blog/:slug" element={<><Navbar /><BlogPostPage /><Footer /></>} />
       <Route path="/login" element={<LoginPage />} />
