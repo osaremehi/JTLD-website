@@ -1,63 +1,75 @@
 // client/src/components/home/Hero.tsx
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Calendar, Users, MapPin, Award } from 'lucide-react'
 
 const STATS = [
-  { number: '150+', label: 'Projects Delivered' },
-  { number: '50+', label: 'Enterprise Clients' },
-  { number: '2', label: 'Continents' },
-  { number: '10+', label: 'Years Experience' },
+  { icon: Calendar, number: '10+', label: 'Years of Experience' },
+  { icon: Users, number: '50+', label: 'Enterprise Clients' },
+  { icon: MapPin, number: '2', label: 'Continents' },
+  { icon: Award, number: '150+', label: 'Projects Delivered' },
 ]
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 text-white overflow-hidden">
-      {/* Dot grid background */}
-      <div
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)',
-          backgroundSize: '24px 24px',
-        }}
-      />
-
-      <div className="relative max-w-[1200px] mx-auto px-6 py-32 w-full">
-        <div className="max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm font-medium mb-8">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            Trusted IT Partner — North America &amp; Africa
+    <section className="pt-[72px] bg-white dark:bg-navy-950">
+      {/* Main hero */}
+      <div className="max-w-[1200px] mx-auto px-6 py-20 md:py-28">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          {/* Left: text */}
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-navy-50 dark:bg-navy-800 border border-navy-200 dark:border-navy-700 text-xs font-semibold text-navy-700 dark:text-blue-300 uppercase tracking-wider mb-6">
+              IT Consulting & Technology Services
+            </div>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-navy-900 dark:text-white leading-tight mb-6">
+              Accelerate Business Growth Through Technology
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-8 max-w-lg">
+              JTLD Consulting delivers real-world expertise to solve complex technology
+              and business challenges — from strategy through execution, across North America and Africa.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <a href="/#contact" className="inline-flex items-center gap-2 px-6 py-3 bg-navy-800 text-white rounded-lg font-semibold hover:bg-navy-700 dark:bg-gold-400 dark:text-navy-950 dark:hover:bg-gold-300 transition-all">
+                Start a Conversation <ArrowRight size={18} />
+              </a>
+              <a href="/#services" className="inline-flex items-center gap-2 px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:border-navy-800 hover:text-navy-800 dark:hover:border-gray-400 transition-all">
+                Explore Services
+              </a>
+            </div>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-            Transforming Business
-            <br />
-            Through <span className="text-gold-400 font-serif">Technology</span>
-          </h1>
-
-          <p className="text-lg text-blue-200 leading-relaxed mb-10 max-w-xl">
-            JTLD Consulting Inc delivers enterprise IT strategy, management consulting,
-            and software solutions that drive measurable outcomes for organizations
-            across North America and Africa.
-          </p>
-
-          <div className="flex flex-wrap gap-4">
-            <a href="#contact" className="btn-primary">
-              Start a Conversation
-              <ArrowRight size={18} />
-            </a>
-            <a href="#services" className="btn-outline border-white/30 text-white hover:bg-white/10 hover:text-white dark:border-white/30">
-              Explore Services
-            </a>
+          {/* Right: visual card grid */}
+          <div className="relative hidden md:grid grid-cols-2 gap-4">
+            <div className="col-span-2 bg-gradient-to-br from-navy-800 to-navy-900 rounded-2xl p-8 text-white">
+              <div className="text-4xl font-extrabold text-gold-400 mb-1">150+</div>
+              <div className="text-sm text-blue-200">Projects successfully delivered across industries</div>
+            </div>
+            <div className="bg-navy-50 dark:bg-navy-800 rounded-2xl p-6 border border-navy-100 dark:border-navy-700">
+              <div className="text-3xl font-extrabold text-navy-800 dark:text-white mb-1">50+</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">Enterprise clients served</div>
+            </div>
+            <div className="bg-gold-400/10 dark:bg-navy-800 rounded-2xl p-6 border border-gold-400/20 dark:border-navy-700">
+              <div className="text-3xl font-extrabold text-navy-800 dark:text-white mb-1">10+</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">Years of excellence</div>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Stats bar */}
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 bg-navy-950/70 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
-          {STATS.map(stat => (
-            <div key={stat.label} className="text-center">
-              <div className="text-3xl font-extrabold text-gold-400">{stat.number}</div>
-              <div className="text-sm text-blue-300 mt-1">{stat.label}</div>
-            </div>
-          ))}
+      {/* Stats bar */}
+      <div className="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-navy-900">
+        <div className="max-w-[1200px] mx-auto px-6 py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {STATS.map(stat => (
+              <div key={stat.label} className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-navy-100 dark:bg-navy-800 text-navy-700 dark:text-blue-300 flex items-center justify-center flex-shrink-0">
+                  <stat.icon size={22} />
+                </div>
+                <div>
+                  <div className="text-2xl font-extrabold text-navy-900 dark:text-white">{stat.number}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">{stat.label}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

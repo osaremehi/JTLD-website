@@ -1,9 +1,10 @@
 // client/src/pages/HomePage.tsx
 import Hero from '@/components/home/Hero'
-import About from '@/components/home/About'
+import TechPartners from '@/components/home/TechPartners'
 import Services from '@/components/home/Services'
-import WhyUs from '@/components/home/WhyUs'
+import About from '@/components/home/About'
 import Industries from '@/components/home/Industries'
+import WhyUs from '@/components/home/WhyUs'
 import Contact from '@/components/home/Contact'
 import CtaBanner from '@/components/home/CtaBanner'
 
@@ -11,10 +12,11 @@ export default function HomePage() {
   return (
     <main>
       <Hero />
-      <About />
+      <TechPartners />
       <Services />
-      <WhyUs />
+      <About />
       <Industries />
+      <WhyUs />
       <Contact />
       <CtaBanner />
     </main>
