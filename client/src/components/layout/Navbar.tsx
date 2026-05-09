@@ -5,35 +5,106 @@ import { Menu, X, ChevronDown, Search } from 'lucide-react'
 import Logo from './Logo'
 import ThemeToggle from './ThemeToggle'
 
-const NAV_ITEMS = [
+type MegaColumn = { heading: string; links: { label: string; href: string }[] }
+type NavItem = {
+  label: string
+  href: string
+  mega?: MegaColumn[]
+}
+
+const NAV_ITEMS: NavItem[] = [
   {
     label: 'What We Do',
     href: '/services',
-    dropdown: [
-      { label: 'IT Strategy & Architecture', href: '/services' },
-      { label: 'Project & Change Management', href: '/services' },
-      { label: 'Software Development', href: '/services' },
-      { label: 'Cloud & Infrastructure', href: '/services' },
+    mega: [
+      {
+        heading: 'Maximize Technology ROI',
+        links: [
+          { label: 'IT Strategy & Architecture', href: '/services' },
+          { label: 'Cloud Strategy & Migration', href: '/services' },
+          { label: 'Digital Transformation', href: '/services' },
+          { label: 'Technology Roadmaps', href: '/services' },
+        ],
+      },
+      {
+        heading: 'Drive Business Outcomes',
+        links: [
+          { label: 'Program & Project Management', href: '/services' },
+          { label: 'Agile Coaching & PMO', href: '/services' },
+          { label: 'Change Management', href: '/services' },
+          { label: 'Business Analysis', href: '/services' },
+        ],
+      },
+      {
+        heading: 'Build & Modernize',
+        links: [
+          { label: 'Custom Web & Mobile Apps', href: '/services' },
+          { label: 'API Design & Integration', href: '/services' },
+          { label: 'DevOps & Cloud Infrastructure', href: '/services' },
+          { label: 'Legacy Modernization', href: '/services' },
+        ],
+      },
     ],
   },
   {
     label: 'Industries',
     href: '/industries',
-    dropdown: [
-      { label: 'Government & Public Sector', href: '/industries' },
-      { label: 'Financial Services', href: '/industries' },
-      { label: 'Energy & Resources', href: '/industries' },
-      { label: 'Healthcare', href: '/industries' },
+    mega: [
+      {
+        heading: 'Public Sector',
+        links: [
+          { label: 'Government & Public Sector', href: '/industries' },
+        ],
+      },
+      {
+        heading: 'Financial Services',
+        links: [
+          { label: 'Banking & Capital Markets', href: '/industries' },
+          { label: 'Insurance', href: '/industries' },
+        ],
+      },
+      {
+        heading: 'Energy & Healthcare',
+        links: [
+          { label: 'Energy & Resources', href: '/industries' },
+          { label: 'Healthcare', href: '/industries' },
+        ],
+      },
     ],
   },
   { label: 'Blog', href: '/blog' },
-  { label: 'Who We Are', href: '/about' },
+  {
+    label: 'Who We Are',
+    href: '/about',
+    mega: [
+      {
+        heading: 'Our Story',
+        links: [
+          { label: 'About JTLD', href: '/about' },
+          { label: 'Our Values', href: '/about' },
+          { label: 'Leadership', href: '/about' },
+        ],
+      },
+      {
+        heading: 'Technology Partnerships',
+        links: [
+          { label: 'Microsoft', href: '/about' },
+          { label: 'AWS', href: '/about' },
+          { label: 'Google Cloud', href: '/about' },
+          { label: 'Salesforce', href: '/about' },
+          { label: 'ServiceNow', href: '/about' },
+          { label: 'Oracle', href: '/about' },
+        ],
+      },
+    ],
+  },
 ]
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null)
   const [scrolled, setScrolled] = useState(false)
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -42,54 +113,49 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  function openDropdown(label: string) {
+  function open(label: string) {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    setActiveDropdown(label)
+    setActiveMenu(label)
   }
 
-  function closeDropdown() {
-    timeoutRef.current = setTimeout(() => setActiveDropdown(null), 150)
+  function close() {
+    timeoutRef.current = setTimeout(() => setActiveMenu(null), 120)
   }
+
+  const activeMega = NAV_ITEMS.find(i => i.label === activeMenu && i.mega)
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all bg-white dark:bg-navy-950
-      border-b border-gray-200 dark:border-gray-800 ${scrolled ? 'shadow-md' : ''}`}>
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 bg-white dark:bg-navy-950
+        border-b border-gray-200 dark:border-gray-800 transition-shadow ${scrolled ? 'shadow-md' : ''}`}
+      onMouseLeave={close}
+    >
+      {/* Main bar */}
       <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between h-[72px]">
         <Logo className="text-navy-900 dark:text-white" />
 
         {/* Desktop nav */}
-        <ul className="hidden md:flex items-center gap-1">
+        <ul className="hidden md:flex items-center h-full">
           {NAV_ITEMS.map(item => (
-            <li key={item.label} className="relative"
-              onMouseEnter={() => item.dropdown && openDropdown(item.label)}
-              onMouseLeave={() => item.dropdown && closeDropdown()}
+            <li key={item.label} className="h-full flex items-center"
+              onMouseEnter={() => item.mega ? open(item.label) : setActiveMenu(null)}
             >
               <Link
                 to={item.href}
-                className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300
-                           hover:text-navy-800 dark:hover:text-white transition-colors rounded-md hover:bg-gray-50 dark:hover:bg-navy-800"
+                className={`flex items-center gap-1 px-5 h-full text-sm font-semibold transition-colors
+                  ${activeMenu === item.label
+                    ? 'bg-navy-900 text-white dark:bg-navy-800'
+                    : 'text-gray-700 dark:text-gray-200 hover:text-navy-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-navy-800'
+                  }`}
               >
                 {item.label}
-                {item.dropdown && <ChevronDown size={14} className={`transition-transform ${activeDropdown === item.label ? 'rotate-180' : ''}`} />}
+                {item.mega && (
+                  <ChevronDown
+                    size={14}
+                    className={`transition-transform ${activeMenu === item.label ? 'rotate-180' : ''}`}
+                  />
+                )}
               </Link>
-
-              {item.dropdown && activeDropdown === item.label && (
-                <div
-                  className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-navy-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl py-2"
-                  onMouseEnter={() => openDropdown(item.label)}
-                  onMouseLeave={() => closeDropdown()}
-                >
-                  {item.dropdown.map(sub => (
-                    <Link
-                      key={sub.label}
-                      to={sub.href}
-                      className="block px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-navy-50 dark:hover:bg-navy-800 hover:text-navy-900 dark:hover:text-white transition-colors"
-                    >
-                      {sub.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
             </li>
           ))}
         </ul>
@@ -99,15 +165,15 @@ export default function Navbar() {
             <Search size={18} />
           </button>
           <ThemeToggle />
-          <a
-            href="/#contact"
+          <Link
+            to="/#contact"
             className="text-sm font-semibold px-5 py-2.5 rounded-lg bg-navy-800 text-white hover:bg-navy-700 dark:bg-gold-400 dark:text-navy-950 dark:hover:bg-gold-300 transition-all"
           >
             Contact Us
-          </a>
+          </Link>
         </div>
 
-        {/* Mobile */}
+        {/* Mobile toggle */}
         <div className="flex md:hidden items-center gap-2">
           <ThemeToggle />
           <button className="p-2 text-gray-700 dark:text-gray-300" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
@@ -116,35 +182,95 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Mega-menu panel — full width, dark navy */}
+      {activeMega && (
+        <div
+          className="absolute left-0 right-0 bg-navy-950 border-t border-navy-800 shadow-2xl"
+          onMouseEnter={() => open(activeMenu!)}
+          onMouseLeave={close}
+        >
+          <div className="max-w-[1200px] mx-auto px-6 py-10">
+            <p className="text-xs font-bold uppercase tracking-widest text-gold-400 mb-6">
+              {activeMenu}
+            </p>
+            <div className="grid gap-10" style={{ gridTemplateColumns: `repeat(${activeMega.mega!.length}, minmax(0, 1fr))` }}>
+              {activeMega.mega!.map(col => (
+                <div key={col.heading}>
+                  <p className="text-xs font-bold uppercase tracking-wider text-white mb-4 pb-2 border-b border-navy-700">
+                    {col.heading}
+                  </p>
+                  <ul className="space-y-3">
+                    {col.links.map(link => (
+                      <li key={link.label}>
+                        <Link
+                          to={link.href}
+                          onClick={() => setActiveMenu(null)}
+                          className="text-sm text-blue-300 hover:text-gold-400 transition-colors"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-white dark:bg-navy-950 border-t border-gray-200 dark:border-gray-800 px-6 py-4">
           <ul className="space-y-1">
             {NAV_ITEMS.map(item => (
               <li key={item.label}>
-                <Link to={item.href} onClick={() => setMenuOpen(false)}
-                  className="block text-sm font-medium py-2.5 px-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-navy-800">
-                  {item.label}
-                </Link>
-                {item.dropdown && (
-                  <ul className="ml-4 mt-1 space-y-1">
-                    {item.dropdown.map(sub => (
-                      <li key={sub.label}>
-                        <Link to={sub.href} onClick={() => setMenuOpen(false)}
-                          className="block text-sm py-2 px-3 text-gray-500 dark:text-gray-400 hover:text-navy-800 dark:hover:text-white">
-                          {sub.label}
-                        </Link>
-                      </li>
+                <button
+                  onClick={() => item.mega
+                    ? setMobileExpanded(mobileExpanded === item.label ? null : item.label)
+                    : setMenuOpen(false)
+                  }
+                  className="w-full flex items-center justify-between text-sm font-semibold py-3 px-3 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-navy-800"
+                >
+                  {item.mega ? item.label : (
+                    <Link to={item.href} onClick={() => setMenuOpen(false)} className="w-full text-left">
+                      {item.label}
+                    </Link>
+                  )}
+                  {item.mega && (
+                    <ChevronDown size={16} className={`transition-transform ${mobileExpanded === item.label ? 'rotate-180' : ''}`} />
+                  )}
+                </button>
+
+                {item.mega && mobileExpanded === item.label && (
+                  <div className="mt-1 mb-2 bg-navy-950 rounded-xl px-4 py-4">
+                    {item.mega.map(col => (
+                      <div key={col.heading} className="mb-4 last:mb-0">
+                        <p className="text-xs font-bold uppercase tracking-wider text-gold-400 mb-2">{col.heading}</p>
+                        <ul className="space-y-2">
+                          {col.links.map(link => (
+                            <li key={link.label}>
+                              <Link
+                                to={link.href}
+                                onClick={() => { setMenuOpen(false); setMobileExpanded(null) }}
+                                className="text-sm text-blue-300 hover:text-white"
+                              >
+                                {link.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 )}
               </li>
             ))}
             <li className="pt-2">
-              <a href="/#contact" onClick={() => setMenuOpen(false)}
+              <Link to="/#contact" onClick={() => setMenuOpen(false)}
                 className="block text-center text-sm font-semibold px-5 py-2.5 rounded-lg bg-navy-800 text-white dark:bg-gold-400 dark:text-navy-950">
                 Contact Us
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
