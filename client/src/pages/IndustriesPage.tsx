@@ -4,7 +4,7 @@ import CtaBanner from '@/components/home/CtaBanner'
 
 export default function IndustriesPage() {
   return (
-    <main className="pt-[72px]">
+    <main className="pt-[100px]">
       <div className="bg-white dark:bg-navy-950 py-16">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-navy-50 dark:bg-navy-800 border border-navy-200 dark:border-navy-700 text-xs font-semibold text-navy-700 dark:text-blue-300 uppercase tracking-wider mb-6">

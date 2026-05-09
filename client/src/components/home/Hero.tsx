@@ -10,7 +10,7 @@ const STATS = [
 
 export default function Hero() {
   return (
-    <section className="pt-[72px] bg-white dark:bg-navy-950">
+    <section className="pt-[100px] bg-white dark:bg-navy-950">
       {/* Main hero */}
       <div className="max-w-[1200px] mx-auto px-6 py-20 md:py-28">
         <div className="grid md:grid-cols-2 gap-12 items-center">

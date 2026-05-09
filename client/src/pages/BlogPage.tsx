@@ -21,7 +21,7 @@ export default function BlogPage() {
   }, [page])
 
   return (
-    <main className="pt-[72px]">
+    <main className="pt-[100px]">
       {/* Header */}
       <section className="py-20 bg-gradient-to-br from-navy-950 to-navy-800 text-white text-center">
         <div className="max-w-[1200px] mx-auto px-6">

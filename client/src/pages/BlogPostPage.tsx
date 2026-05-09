@@ -26,7 +26,7 @@ export default function BlogPostPage() {
 
   if (loading) {
     return (
-      <main className="pt-[72px] min-h-screen flex items-center justify-center">
+      <main className="pt-[100px] min-h-screen flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-4 border-navy-500 border-t-transparent rounded-full" />
       </main>
     )
@@ -34,7 +34,7 @@ export default function BlogPostPage() {
 
   if (notFound || !post) {
     return (
-      <main className="pt-[72px] min-h-screen flex items-center justify-center">
+      <main className="pt-[100px] min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-navy-900 dark:text-white mb-4">Post Not Found</h1>
           <Link to="/blog" className="text-navy-600 dark:text-gold-400 hover:underline flex items-center gap-2 justify-center">
@@ -46,7 +46,7 @@ export default function BlogPostPage() {
   }
 
   return (
-    <main className="pt-[72px]">
+    <main className="pt-[100px]">
       {/* Header */}
       <section className="py-16 bg-gradient-to-br from-navy-950 to-navy-800 text-white">
         <div className="max-w-3xl mx-auto px-6">
