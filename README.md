@@ -1,115 +1,246 @@
 # JTLD Consulting Inc — Full Stack Platform
 
-Corporate website and admin platform for JTLD Consulting Inc, an IT strategy and management consulting firm operating across North America and Africa.
+Corporate website and candidate portal for JTLD Consulting Inc, an IT strategy and management consulting firm operating across North America and Africa.
+
+**Live site:** [jtldinc.com](https://jtldinc.com) · **API:** [api.jtldinc.com](https://api.jtldinc.com)
+
+---
 
 ## Tech Stack
 
-- **Frontend:** React 19, Vite, TypeScript, Tailwind CSS, React Router
-- **Backend:** Node.js, Express, TypeScript
-- **Database:** PostgreSQL via Supabase
-- **Auth:** Supabase Auth
-- **Hosting:** Frontend on Vercel, Backend on Render (free tier)
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19, Vite, TypeScript, Tailwind CSS, React Router v6 |
+| Backend | Node.js, Express 5, TypeScript |
+| Database | PostgreSQL via Supabase (with RLS) |
+| Auth | Supabase Auth (admin + candidate flows) |
+| File Storage | Supabase Storage (candidate resumes) |
+| Frontend Hosting | Vercel (root dir: `client/`) |
+| Backend Hosting | Render (root dir: `server/`) |
+| Domain | GoDaddy DNS → Vercel + Render |
+
+---
 
 ## Project Structure
 
 ```
-├── client/              # React frontend (Vite)
+├── client/                        # React frontend (Vite)
 │   ├── src/
-│   │   ├── components/  # Reusable UI + layout + feature components
-│   │   ├── pages/       # Route page components
-│   │   ├── hooks/       # Custom React hooks
-│   │   ├── lib/         # API client, Supabase client, utilities
-│   │   └── types/       # TypeScript type definitions
-│   └── ...config files
-├── server/              # Express API backend
+│   │   ├── components/
+│   │   │   ├── admin/             # Admin layout
+│   │   │   ├── home/              # Homepage section components
+│   │   │   └── layout/            # Navbar, Footer, Logo, ThemeToggle
+│   │   ├── pages/
+│   │   │   ├── admin/             # DashboardPage, InquiriesPage, BlogEditorPage
+│   │   │   ├── careers/           # CareersLoginPage, CareersSignupPage, CareersProfilePage
+│   │   │   ├── HomePage.tsx
+│   │   │   ├── CareersPage.tsx
+│   │   │   ├── ServicesPage.tsx
+│   │   │   ├── AboutPage.tsx
+│   │   │   ├── IndustriesPage.tsx
+│   │   │   ├── BlogPage.tsx
+│   │   │   ├── BlogPostPage.tsx
+│   │   │   └── LoginPage.tsx      # Admin-only login
+│   │   ├── hooks/
+│   │   │   └── useAuth.ts         # Supabase auth state hook
+│   │   ├── lib/
+│   │   │   ├── supabase.ts        # Supabase client
+│   │   │   └── api.ts             # Express API client wrapper
+│   │   └── types/
+│   │       └── index.ts           # Shared TypeScript types
+│   ├── vercel.json                # SPA rewrite rule + Vite config
+│   └── ...config files (vite, tailwind, tsconfig, postcss)
+│
+├── server/                        # Express API backend
 │   ├── src/
-│   │   ├── routes/      # API route handlers (contact, blog, admin)
-│   │   ├── middleware/  # Auth, validation middleware
-│   │   ├── lib/         # Supabase client
-│   │   └── types/       # Zod schemas + TypeScript types
-│   └── ...config files
+│   │   ├── routes/
+│   │   │   ├── contact.ts         # Contact form endpoints
+│   │   │   ├── blog.ts            # Blog CRUD endpoints
+│   │   │   └── admin.ts           # Admin dashboard endpoints
+│   │   ├── middleware/
+│   │   │   ├── auth.ts            # requireAuth + requireAdmin
+│   │   │   └── validate.ts        # Zod validation middleware
+│   │   ├── lib/
+│   │   │   └── supabase.ts        # Server-side Supabase client (service role)
+│   │   └── types/
+│   │       └── index.ts           # Zod schemas + TypeScript types
+│   └── ...config files (tsconfig, package.json)
+│
 ├── supabase/
-│   └── migrations/      # SQL migration files
-├── index.html           # Static fallback site
-└── .env.example         # Environment variable template
+│   └── migrations/
+│       ├── 001_initial_schema.sql  # contact_submissions, blog_posts, admin_profiles, page_views
+│       └── 002_careers.sql         # candidates, resumes tables + storage bucket
+│
+├── render.yaml                    # Render blueprint (auto-deploy backend)
+└── .env.example                   # Environment variable template
 ```
 
-## Setup
+---
 
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/osaremehi/jtld-consulting-platform.git
-   cd jtld-consulting-platform
-   ```
+## Pages & Routes
 
-2. **Set up Supabase**
-   - Create a project at [supabase.com](https://supabase.com)
-   - Go to SQL Editor and run `supabase/migrations/001_initial_schema.sql`
-   - Go to Settings → API and copy your keys
+| Route | Page | Auth |
+|-------|------|------|
+| `/` | Homepage (Hero, TechPartners, Contact, CTA) | Public |
+| `/services` | What We Do (Services + WhyUs) | Public |
+| `/about` | Who We Are (About) | Public |
+| `/industries` | Industries | Public |
+| `/careers` | Careers landing + job listings | Public |
+| `/careers/signup` | Candidate registration | Public |
+| `/careers/login` | Candidate sign in | Public |
+| `/careers/profile` | Candidate profile + resume upload | Candidate Auth |
+| `/blog` | Blog listing | Public |
+| `/blog/:slug` | Blog post | Public |
+| `/login` | Admin login | Public |
+| `/admin` | Admin dashboard | Admin only |
+| `/admin/inquiries` | Contact submissions | Admin only |
+| `/admin/blog` | Blog editor | Admin only |
 
-3. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Fill in your Supabase URL and keys
-   ```
-
-4. **Install and run the backend**
-   ```bash
-   cd server
-   npm install
-   npm run dev          # runs on http://localhost:3001
-   ```
-
-5. **Install and run the frontend** (in a separate terminal)
-   ```bash
-   cd client
-   npm install
-   npm run dev          # runs on http://localhost:5173
-   ```
-
-6. **Create your first admin user**
-   - In Supabase Dashboard → Authentication → Users → Add User
-   - Then in SQL Editor, insert an admin profile:
-     ```sql
-     INSERT INTO admin_profiles (id, display_name, role)
-     VALUES ('your-user-uuid', 'Josh', 'super_admin');
-     ```
-   - Log in at `http://localhost:5173/login`
+---
 
 ## API Endpoints
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| POST | `/api/contacts` | Public | Submit contact form |
+| GET | `/api/health` | Public | Health check |
+| POST | `/api/contacts` | Public (rate-limited) | Submit contact form |
 | GET | `/api/contacts` | Admin | List submissions (paginated) |
 | GET | `/api/contacts/:id` | Admin | Get single submission |
 | PATCH | `/api/contacts/:id/status` | Admin | Update submission status |
 | GET | `/api/blog` | Public | List published posts (paginated) |
-| GET | `/api/blog/:slug` | Public | Get single post by slug |
+| GET | `/api/blog/:slug` | Public | Get post by slug |
 | POST | `/api/blog` | Admin | Create blog post |
 | PATCH | `/api/blog/:id` | Admin | Update blog post |
 | DELETE | `/api/blog/:id` | Admin | Delete blog post |
-| GET | `/api/admin/dashboard` | Admin | Dashboard statistics |
-| GET | `/api/admin/blog` | Admin | List all posts (incl. drafts) |
+| GET | `/api/admin/dashboard` | Admin | Dashboard stats |
+| GET | `/api/admin/blog` | Admin | All posts (incl. drafts) |
 | GET | `/api/admin/analytics` | Admin | Page view analytics |
-| GET | `/api/health` | Public | Health check |
+
+> **Candidate portal** (profile, resume upload/download) communicates directly with Supabase — no Express API routes needed.
+
+---
+
+## Database Schema
+
+### Tables (Supabase PostgreSQL)
+
+| Table | Purpose | RLS |
+|-------|---------|-----|
+| `contact_submissions` | Contact form entries | Admin read via service role |
+| `blog_posts` | Blog content (title, slug, body, status) | Public read published; admin write |
+| `admin_profiles` | Admin user roles (`super_admin`, `editor`) | Admin read own |
+| `page_views` | Analytics page view log | Admin read |
+| `candidates` | Candidate profile (name, email, phone, location, bio) | Owner only |
+| `resumes` | Resume file metadata + Supabase Storage path | Owner only |
+
+### Storage Buckets
+
+| Bucket | Access | Limit | Types |
+|--------|--------|-------|-------|
+| `resumes` | Private (owner only) | 10 MB | PDF, DOC, DOCX |
+
+---
+
+## Local Setup
+
+### Prerequisites
+- Node.js 20+
+- A [Supabase](https://supabase.com) project
+
+### 1. Clone
+
+```bash
+git clone https://github.com/osaremehi/JTLD-website.git
+cd JTLD-website
+```
+
+### 2. Apply database migrations
+
+In your Supabase project → SQL Editor, run in order:
+1. `supabase/migrations/001_initial_schema.sql`
+2. `supabase/migrations/002_careers.sql`
+
+### 3. Create your admin user
+
+In Supabase → Authentication → Users → Add User, then:
+```sql
+INSERT INTO admin_profiles (id, display_name, role)
+VALUES ('your-user-uuid', 'Your Name', 'super_admin');
+```
+
+### 4. Configure environment
+
+```bash
+# Backend
+cp .env.example server/.env
+# Fill in SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, CLIENT_URL, PORT
+
+# Frontend
+cp .env.example client/.env
+# Fill in VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_URL
+```
+
+### 5. Run backend
+
+```bash
+cd server
+npm install
+npm run dev    # http://localhost:3001
+```
+
+### 6. Run frontend
+
+```bash
+cd client
+npm install
+npm run dev    # http://localhost:5173
+```
+
+---
 
 ## Deployment
 
-### Frontend (Vercel)
-1. Push to GitHub
-2. Import project in Vercel
-3. Set root directory to `client`
-4. Add env vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_URL`
-5. Deploy
+### Frontend → Vercel
 
-### Backend (Render)
-1. Create a new Web Service on [render.com](https://render.com)
-2. Connect your GitHub repo
-3. Set root directory to `server`
-4. Build command: `npm install && npm run build`
-5. Start command: `npm start`
-6. Add env vars: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `CLIENT_URL`, `PORT`
+1. Import repo in Vercel, set **Root Directory** to `client`, **Framework** to `Vite`
+2. Add environment variables:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+   - `VITE_API_URL` (e.g. `https://api.jtldinc.com/api`)
+3. Vercel auto-deploys on push to `main`
+
+### Backend → Render
+
+Render reads `render.yaml` from the repo root automatically.
+
+Build command: `npm install --include=dev && npm run build`
+Start command: `npm start`
+
+Add environment variables in Render dashboard:
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `CLIENT_URL` (e.g. `https://jtldinc.com`)
+- `NODE_ENV=production`
+
+### DNS (GoDaddy)
+
+| Type | Name | Value |
+|------|------|-------|
+| A | `@` | `216.198.79.1` (Vercel) |
+| CNAME | `www` | `b9c8962ded5efb88.vercel-dns-017.com` |
+| CNAME | `api` | `jtld-api.onrender.com` |
+
+---
+
+## Branch Strategy
+
+| Branch | Environment | URL |
+|--------|------------|-----|
+| `main` | Production | jtldinc.com |
+| `develop` | Staging | Preview URL (Vercel) |
+
+---
 
 ## License
 

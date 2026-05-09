@@ -1,132 +1,95 @@
-# GitHub Secrets & API Keys — CI/CD Setup Guide
+# GitHub Secrets & CI/CD Setup Guide
 
-> This document lists all secrets required for the GitHub Actions CI/CD pipeline.
-> Set them at: **GitHub repo → Settings → Secrets and variables → Actions → New repository secret**
+> Set secrets at: **GitHub repo → Settings → Secrets and variables → Actions → New repository secret**
 > Or via CLI: `gh secret set SECRET_NAME`
 
 ---
 
-## Required Secrets (Deployment)
+## Deployment Architecture
 
-These are needed for the `deploy.yml` and `pr-preview.yml` workflows to deploy to Vercel.
+| Service | Platform | Domain | Branch |
+|---------|---------|--------|--------|
+| Frontend (React/Vite) | Vercel | `jtldinc.com` | `main` (production), `develop` (preview) |
+| Backend (Express API) | Render | `api.jtldinc.com` | `main` via `render.yaml` |
+| Database + Auth + Storage | Supabase | `dldjahdxilowedziqlgi.supabase.co` | N/A (managed) |
+
+---
+
+## Required GitHub Secrets (Vercel Deployment)
 
 ### `VERCEL_TOKEN`
-
-- **What:** Personal access token for Vercel CLI authentication
-- **Where to get it:** [Vercel Account Settings → Tokens](https://vercel.com/account/tokens)
-- **Steps:**
-  1. Go to https://vercel.com/account/tokens
-  2. Click "Create Token"
-  3. Name it `github-actions` (or similar)
-  4. Scope: Full Account
-  5. Copy the token immediately (it won't be shown again)
-- **Set it:**
-  ```bash
-  gh secret set VERCEL_TOKEN
-  # Paste the token when prompted
-  ```
+- **What:** Personal access token for Vercel CLI
+- **Get it:** [vercel.com/account/tokens](https://vercel.com/account/tokens) → Create Token → Full Account scope
+```bash
+gh secret set VERCEL_TOKEN
+```
 
 ### `VERCEL_ORG_ID`
-
-- **What:** Your Vercel team/org identifier
-- **Value:** `team_LLH7S0MJTcyU6oTmXNwHCK7V`
-- **Source:** `.vercel/project.json` → `orgId`
-- **Set it:**
-  ```bash
-  gh secret set VERCEL_ORG_ID --body "team_LLH7S0MJTcyU6oTmXNwHCK7V"
-  ```
+- **What:** Your Vercel team/org ID
+- **Get it:** Vercel dashboard → Settings → General → Team ID, or from `.vercel/project.json`
+```bash
+gh secret set VERCEL_ORG_ID --body "your-org-id"
+```
 
 ### `VERCEL_PROJECT_ID`
-
-- **What:** The Vercel project identifier
-- **Value:** `prj_DxtRWbI09E2zLXLP6pcMWfVJpun3`
-- **Source:** `.vercel/project.json` → `projectId`
-- **Set it:**
-  ```bash
-  gh secret set VERCEL_PROJECT_ID --body "prj_DxtRWbI09E2zLXLP6pcMWfVJpun3"
-  ```
+- **What:** The specific Vercel project ID for the frontend
+- **Get it:** Vercel project → Settings → General → Project ID
+```bash
+gh secret set VERCEL_PROJECT_ID --body "your-project-id"
+```
 
 ---
 
-## Required Secrets (Application Runtime)
+## Required Vercel Environment Variables (App Runtime)
 
-These are needed as Vercel environment variables for the app to function in staging/production.
+Set these in Vercel: **Project → Settings → Environment Variables**
 
-### `ANTHROPIC_API_KEY`
+| Variable | Value | Environment |
+|----------|-------|------------|
+| `VITE_SUPABASE_URL` | `https://dldjahdxilowedziqlgi.supabase.co` | Production + Preview |
+| `VITE_SUPABASE_ANON_KEY` | Your Supabase anon key | Production + Preview |
+| `VITE_API_URL` | `https://api.jtldinc.com/api` | Production |
+| `VITE_API_URL` | Your Render preview URL | Preview |
 
-- **What:** API key for the Tosh chatbot (Claude Haiku)
-- **Where to get it:** [Anthropic Console → API Keys](https://console.anthropic.com/settings/keys)
-- **Used by:** `POST /api/chat` endpoint
-- **Set in Vercel:**
-  ```bash
-  vercel env add ANTHROPIC_API_KEY production
-  vercel env add ANTHROPIC_API_KEY preview
-  ```
-
-### `DATABASE_URL`
-
-- **What:** PostgreSQL connection string
-- **Format:** `postgresql://user:password@host:5432/dbname`
-- **Used by:** Prisma ORM (migrations, queries)
-- **Where to get it:** Your database provider (Supabase, Neon, Railway, etc.)
-- **Set in GitHub (for CI migration job):**
-  ```bash
-  gh secret set DATABASE_URL
-  ```
-- **Set in Vercel (for runtime):**
-  ```bash
-  vercel env add DATABASE_URL production
-  vercel env add DATABASE_URL preview
-  ```
+```bash
+vercel env add VITE_SUPABASE_URL production
+vercel env add VITE_SUPABASE_ANON_KEY production
+vercel env add VITE_API_URL production
+```
 
 ---
 
-## Optional Secrets (Future Features)
+## Required Render Environment Variables (Backend Runtime)
 
-These are referenced in `.env.example` but not yet required for current functionality.
+Set these in Render: **Service → Environment**
 
-| Secret | Purpose | When Needed |
-|--------|---------|-------------|
-| `NEXTAUTH_SECRET` | Session encryption for NextAuth.js | When auth is implemented |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth login | When Google login is added |
-| `LINKEDIN_CLIENT_ID` / `LINKEDIN_CLIENT_SECRET` | LinkedIn OAuth login | When LinkedIn login is added |
-| `REDIS_URL` | Redis cache connection | When caching is enabled |
-| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | S3 file storage | When resume uploads go to S3 |
-| `AWS_S3_BUCKET` / `AWS_S3_REGION` | S3 bucket config | Same as above |
-| `SENDGRID_API_KEY` | Email sending | When email notifications are built |
-| `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | Payments | When billing is added |
-| `SENTRY_DSN` / `SENTRY_AUTH_TOKEN` | Error monitoring | When Sentry is configured |
-| `GA4_MEASUREMENT_ID` | Google Analytics | When analytics is added |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Google Maps on contact page | When map widget is added |
-| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` / `RECAPTCHA_SECRET_KEY` | Spam protection | When reCAPTCHA is enabled |
-| `CRON_SECRET` | Vercel cron job auth | When cron jobs are secured |
+> Render reads `render.yaml` from the repo root for service config. Env vars with `sync: false` must be set manually.
+
+| Variable | Value |
+|----------|-------|
+| `SUPABASE_URL` | `https://dldjahdxilowedziqlgi.supabase.co` |
+| `SUPABASE_ANON_KEY` | Your Supabase anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service role key (keep secret) |
+| `CLIENT_URL` | `https://jtldinc.com` |
+| `NODE_ENV` | `production` |
 
 ---
 
 ## Quick Setup Checklist
 
 ```bash
-# 1. Install GitHub CLI (if not already)
+# 1. Install GitHub CLI (Windows)
 winget install GitHub.cli
 
 # 2. Authenticate
 gh auth login
 
-# 3. Set required deployment secrets
-gh secret set VERCEL_TOKEN           # Paste your Vercel token
-gh secret set VERCEL_ORG_ID --body "team_LLH7S0MJTcyU6oTmXNwHCK7V"
-gh secret set VERCEL_PROJECT_ID --body "prj_DxtRWbI09E2zLXLP6pcMWfVJpun3"
+# 3. Set Vercel deployment secrets
+gh secret set VERCEL_TOKEN           # paste when prompted
+gh secret set VERCEL_ORG_ID --body "your-org-id"
+gh secret set VERCEL_PROJECT_ID --body "your-project-id"
 
-# 4. Set database URL (when database is provisioned)
-gh secret set DATABASE_URL           # Paste your connection string
-
-# 5. Set Vercel environment variables (for app runtime)
-vercel env add ANTHROPIC_API_KEY production
-vercel env add ANTHROPIC_API_KEY preview
-vercel env add DATABASE_URL production
-vercel env add DATABASE_URL preview
-
-# 6. Verify secrets are set
+# 4. Verify
 gh secret list
 ```
 
@@ -134,8 +97,29 @@ gh secret list
 
 ## Environment Mapping
 
-| Branch | Environment | Vercel Mode | URL |
-|--------|------------|-------------|-----|
-| `develop` | Staging | Preview | `jtld-consulting-platform.vercel.app` |
-| `main` | Production | Production | `jtldinc.com` (when DNS pointed) |
-| Feature PR | Preview | Preview | Dynamic URL (commented on PR) |
+| Branch | Vercel Environment | URL |
+|--------|-------------------|-----|
+| `main` | Production | `https://jtldinc.com` |
+| `develop` | Preview | Dynamic preview URL |
+| Feature PR | Preview | Dynamic preview URL (auto-commented on PR) |
+
+---
+
+## Render Auto-Deploy
+
+Render is configured via `render.yaml` in the repo root. On push to `main`, Render automatically:
+1. Installs dependencies: `npm install --include=dev`
+2. Builds TypeScript: `npm run build`
+3. Starts server: `npm start`
+
+The `--include=dev` flag is required because TypeScript and `@types/*` packages are devDependencies but needed at build time.
+
+---
+
+## Optional Secrets (Future Features)
+
+| Secret | Purpose |
+|--------|---------|
+| `SENDGRID_API_KEY` | Email notifications for contact form |
+| `SENTRY_DSN` | Error monitoring |
+| `GA4_MEASUREMENT_ID` | Google Analytics |
