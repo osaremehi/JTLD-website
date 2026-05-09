@@ -1,5 +1,6 @@
 // client/src/components/layout/Navbar.tsx
 import { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { Menu, X, ChevronDown, Search } from 'lucide-react'
 import Logo from './Logo'
 import ThemeToggle from './ThemeToggle'
@@ -63,14 +64,14 @@ export default function Navbar() {
               onMouseEnter={() => item.dropdown && openDropdown(item.label)}
               onMouseLeave={() => item.dropdown && closeDropdown()}
             >
-              <a
-                href={item.href}
+              <Link
+                to={item.href}
                 className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300
                            hover:text-navy-800 dark:hover:text-white transition-colors rounded-md hover:bg-gray-50 dark:hover:bg-navy-800"
               >
                 {item.label}
                 {item.dropdown && <ChevronDown size={14} className={`transition-transform ${activeDropdown === item.label ? 'rotate-180' : ''}`} />}
-              </a>
+              </Link>
 
               {item.dropdown && activeDropdown === item.label && (
                 <div
@@ -79,13 +80,13 @@ export default function Navbar() {
                   onMouseLeave={() => closeDropdown()}
                 >
                   {item.dropdown.map(sub => (
-                    <a
+                    <Link
                       key={sub.label}
-                      href={sub.href}
+                      to={sub.href}
                       className="block px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-navy-50 dark:hover:bg-navy-800 hover:text-navy-900 dark:hover:text-white transition-colors"
                     >
                       {sub.label}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -121,18 +122,18 @@ export default function Navbar() {
           <ul className="space-y-1">
             {NAV_ITEMS.map(item => (
               <li key={item.label}>
-                <a href={item.href} onClick={() => setMenuOpen(false)}
+                <Link to={item.href} onClick={() => setMenuOpen(false)}
                   className="block text-sm font-medium py-2.5 px-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-navy-800">
                   {item.label}
-                </a>
+                </Link>
                 {item.dropdown && (
                   <ul className="ml-4 mt-1 space-y-1">
                     {item.dropdown.map(sub => (
                       <li key={sub.label}>
-                        <a href={sub.href} onClick={() => setMenuOpen(false)}
+                        <Link to={sub.href} onClick={() => setMenuOpen(false)}
                           className="block text-sm py-2 px-3 text-gray-500 dark:text-gray-400 hover:text-navy-800 dark:hover:text-white">
                           {sub.label}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
