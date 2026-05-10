@@ -19,7 +19,6 @@ export default function CandidateDashboard() {
   const { user } = useAuth()
   const [tab, setTab] = useState<Tab>('applications')
   const [applications, setApplications] = useState<Application[]>([])
-  const [profile, setProfile] = useState<CandidateProfile | null>(null)
   const [loadingApps, setLoadingApps] = useState(true)
   const [loadingProfile, setLoadingProfile] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -43,7 +42,6 @@ export default function CandidateDashboard() {
     getCandidateProfile().then(res => {
       if (res.data) {
         const p = res.data
-        setProfile(p)
         setEditBio(p.bio ?? '')
         setEditPhone(p.phone ?? '')
         setEditLocation(p.location ?? '')
@@ -79,7 +77,6 @@ export default function CandidateDashboard() {
     if (res.error) {
       showToast('error', 'Failed to save profile.')
     } else {
-      setProfile(res.data!)
       showToast('success', 'Profile updated successfully.')
     }
   }

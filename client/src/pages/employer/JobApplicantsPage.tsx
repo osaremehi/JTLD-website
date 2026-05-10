@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ChevronLeft, User, MapPin, Phone, ExternalLink, ChevronDown } from 'lucide-react'
+import { ChevronLeft, User, MapPin, Phone, ChevronDown } from 'lucide-react'
 import { getJobApplications, updateApplicationStatus } from '@/lib/api'
 import type { Application } from '@/types'
 
