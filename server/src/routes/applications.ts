@@ -1,6 +1,7 @@
 // server/src/routes/applications.ts
 import { Router } from 'express'
 import { supabase } from '../lib/supabase.js'
+import { sendApplicationConfirmation, sendNewApplicationAlert } from '../lib/email.js'
 import { ApplicationSchema, ApplicationStatusSchema } from '../types/index.js'
 import { validate } from '../middleware/validate.js'
 import { requireAuth, requireCandidate, requireEmployer } from '../middleware/auth.js'
@@ -15,7 +16,7 @@ router.post('/jobs/:id/apply', requireAuth, requireCandidate, validate(Applicati
     // Verify job exists and is active
     const { data: job } = await supabase
       .from('jobs')
-      .select('id, title')
+      .select('id, title, employers ( id, company_name, user_id )')
       .eq('id', req.params.id)
       .eq('is_active', true)
       .single()
@@ -46,6 +47,28 @@ router.post('/jobs/:id/apply', requireAuth, requireCandidate, validate(Applicati
     }
 
     res.status(201).json({ data })
+
+    // Send emails async (non-blocking)
+    const employer = (job as any).employers
+    Promise.all([
+      sendApplicationConfirmation({
+        candidateName: candidate.full_name,
+        candidateEmail: candidate.email,
+        jobTitle: job.title,
+        companyName: employer?.company_name ?? 'the employer',
+      }),
+      employer?.user_id ? supabase.auth.admin.getUserById(employer.user_id).then(({ data: u }) => {
+        if (u.user?.email) {
+          return sendNewApplicationAlert({
+            employerEmail: u.user.email,
+            companyName: employer.company_name,
+            candidateName: candidate.full_name,
+            jobTitle: job.title,
+            jobId: req.params.id,
+          })
+        }
+      }) : Promise.resolve(),
+    ]).catch(err => console.error('Email send error:', err))
   } catch (err) {
     console.error('Apply error:', err)
     res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Internal server error' } })

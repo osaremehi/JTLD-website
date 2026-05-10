@@ -99,6 +99,20 @@ export interface Application {
   candidates?: Pick<CandidateProfile, 'id' | 'full_name' | 'email' | 'phone' | 'location' | 'linkedin_url' | 'skills'>
 }
 
+export interface JobAlert {
+  id: string
+  candidate_id: string
+  label: string | null
+  q: string | null
+  location: string | null
+  work_arrangement: 'remote' | 'hybrid' | 'onsite' | 'any' | null
+  employment_type: 'full-time' | 'part-time' | 'contract' | 'temp' | null
+  experience_level: 'entry' | 'mid' | 'senior' | 'executive' | null
+  frequency: 'daily' | 'weekly'
+  last_sent_at: string | null
+  created_at: string
+}
+
 export interface DashboardStats {
   totalInquiries: number
   newInquiries: number

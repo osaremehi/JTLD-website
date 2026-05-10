@@ -1,7 +1,7 @@
 // client/src/pages/admin/DashboardPage.tsx
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { MessageSquare, FileText, Eye, Inbox, ArrowRight } from 'lucide-react'
+import { MessageSquare, FileText, Eye, Inbox, ArrowRight, Briefcase, Users } from 'lucide-react'
 import { getDashboard } from '@/lib/api'
 import type { DashboardData } from '@/types'
 
@@ -33,6 +33,8 @@ export default function DashboardPage() {
     { label: 'Total Inquiries', value: data.stats.totalInquiries, icon: MessageSquare, color: 'text-green-500 bg-green-50 dark:bg-green-900/20' },
     { label: 'Published Posts', value: data.stats.publishedPosts, icon: FileText, color: 'text-purple-500 bg-purple-50 dark:bg-purple-900/20' },
     { label: 'Page Views (30d)', value: data.stats.pageViews30d, icon: Eye, color: 'text-gold-500 bg-gold-400/10' },
+    { label: 'Active Jobs', value: data.stats.activeJobs ?? 0, icon: Briefcase, color: 'text-teal-500 bg-teal-50 dark:bg-teal-900/20' },
+    { label: 'Pending Applications', value: data.stats.pendingApplications ?? 0, icon: Users, color: 'text-orange-500 bg-orange-50 dark:bg-orange-900/20' },
   ]
 
   return (
@@ -40,7 +42,7 @@ export default function DashboardPage() {
       <h1 className="text-2xl font-bold text-navy-900 dark:text-white mb-8">Dashboard</h1>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
         {statCards.map(card => (
           <div
             key={card.label}

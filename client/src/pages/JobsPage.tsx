@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, MapPin, Briefcase, Clock, DollarSign, SlidersHorizontal, X } from 'lucide-react'
-import { getJobs, type JobFilters } from '@/lib/api'
+import { Search, MapPin, Briefcase, Clock, DollarSign, SlidersHorizontal, X, Bell, CheckCircle } from 'lucide-react'
+import { getJobs, createJobAlert, type JobFilters } from '@/lib/api'
+import { useAuth } from '@/hooks/useAuth'
 import type { Job, Pagination } from '@/types'
 
 const WORK_ARRANGEMENTS = [
@@ -84,10 +85,13 @@ function JobCard({ job }: { job: Job }) {
 }
 
 export default function JobsPage() {
+  const { user } = useAuth()
   const [jobs, setJobs] = useState<Job[]>([])
   const [pagination, setPagination] = useState<Pagination | null>(null)
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
+  const [alertSaved, setAlertSaved] = useState(false)
+  const [savingAlert, setSavingAlert] = useState(false)
 
   const [filters, setFilters] = useState<JobFilters>({ page: 1, limit: 20 })
   const [search, setSearch] = useState('')
@@ -118,7 +122,27 @@ export default function JobsPage() {
     setSearch('')
   }
 
+  async function saveAlert() {
+    if (!user) return
+    setSavingAlert(true)
+    const hasFilters = filters.q || filters.location || filters.work_arrangement || filters.employment_type || filters.experience_level
+    const label = filters.q ? `"${filters.q}"` : filters.location ? `Jobs in ${filters.location}` : 'Job Alert'
+    await createJobAlert({
+      label: hasFilters ? label : 'All Jobs',
+      q: filters.q,
+      location: filters.location,
+      work_arrangement: filters.work_arrangement,
+      employment_type: filters.employment_type,
+      experience_level: filters.experience_level,
+      frequency: 'daily',
+    })
+    setSavingAlert(false)
+    setAlertSaved(true)
+    setTimeout(() => setAlertSaved(false), 4000)
+  }
+
   const activeFilterCount = [filters.work_arrangement, filters.employment_type, filters.experience_level, filters.location].filter(Boolean).length
+  const hasActiveSearch = Boolean(filters.q || filters.location || filters.work_arrangement || filters.employment_type || filters.experience_level)
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-navy-950 pt-[100px]">
@@ -158,6 +182,21 @@ export default function JobsPage() {
                 <span className="ml-1 bg-navy-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{activeFilterCount}</span>
               )}
             </button>
+            {user && (
+              <button
+                onClick={saveAlert}
+                disabled={savingAlert || alertSaved}
+                title="Save this search as a job alert"
+                className={`flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  alertSaved
+                    ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 border border-green-200 dark:border-green-800'
+                    : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-navy-700'
+                }`}
+              >
+                {alertSaved ? <CheckCircle size={14} /> : <Bell size={14} />}
+                {alertSaved ? 'Saved!' : hasActiveSearch ? 'Save Search' : 'Save Alert'}
+              </button>
+            )}
           </div>
         </div>
       </div>

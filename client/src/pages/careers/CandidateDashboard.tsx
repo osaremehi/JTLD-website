@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Briefcase, User, Clock, CheckCircle, XCircle, AlertCircle, ChevronRight, Plus } from 'lucide-react'
-import { getMyApplications, getCandidateProfile, updateCandidateProfile } from '@/lib/api'
+import { Briefcase, User, Clock, CheckCircle, XCircle, AlertCircle, ChevronRight, Plus, Bell, Trash2 } from 'lucide-react'
+import { getMyApplications, getCandidateProfile, updateCandidateProfile, getMyJobAlerts, deleteJobAlert } from '@/lib/api'
 import { useAuth } from '@/hooks/useAuth'
-import type { Application, CandidateProfile } from '@/types'
+import type { Application, CandidateProfile, JobAlert } from '@/types'
 
 const STATUS_CONFIG: Record<Application['status'], { label: string; color: string; icon: React.ElementType }> = {
   pending: { label: 'Pending', color: 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400', icon: Clock },
@@ -13,7 +13,7 @@ const STATUS_CONFIG: Record<Application['status'], { label: string; color: strin
   hired: { label: 'Hired!', color: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400', icon: CheckCircle },
 }
 
-type Tab = 'applications' | 'profile'
+type Tab = 'applications' | 'alerts' | 'profile'
 
 export default function CandidateDashboard() {
   const { user } = useAuth()
@@ -23,6 +23,8 @@ export default function CandidateDashboard() {
   const [loadingProfile, setLoadingProfile] = useState(true)
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
+  const [alerts, setAlerts] = useState<JobAlert[]>([])
+  const [loadingAlerts, setLoadingAlerts] = useState(true)
 
   // Profile edit state
   const [editBio, setEditBio] = useState('')
@@ -38,6 +40,10 @@ export default function CandidateDashboard() {
     getMyApplications().then(res => {
       setApplications(res.data ?? [])
       setLoadingApps(false)
+    })
+    getMyJobAlerts().then(res => {
+      setAlerts(res.data ?? [])
+      setLoadingAlerts(false)
     })
     getCandidateProfile().then(res => {
       if (res.data) {
@@ -58,6 +64,12 @@ export default function CandidateDashboard() {
   function showToast(type: 'success' | 'error', msg: string) {
     setToast({ type, msg })
     setTimeout(() => setToast(null), 4000)
+  }
+
+  async function handleDeleteAlert(id: string) {
+    await deleteJobAlert(id)
+    setAlerts(a => a.filter(x => x.id !== id))
+    showToast('success', 'Alert deleted.')
   }
 
   async function handleSaveProfile(e: React.FormEvent) {
@@ -104,19 +116,24 @@ export default function CandidateDashboard() {
 
         {/* Tabs */}
         <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700 mb-6">
-          {(['applications', 'profile'] as Tab[]).map(t => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-                tab === t
-                  ? 'border-navy-600 dark:border-gold-400 text-navy-600 dark:text-gold-400'
-                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
-            >
-              {t === 'applications' ? <><Briefcase size={15} /> Applications {applications.length > 0 && `(${applications.length})`}</> : <><User size={15} /> Profile</>}
-            </button>
-          ))}
+          <button
+            onClick={() => setTab('applications')}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${tab === 'applications' ? 'border-navy-600 dark:border-gold-400 text-navy-600 dark:text-gold-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+          >
+            <Briefcase size={15} /> Applications {applications.length > 0 && `(${applications.length})`}
+          </button>
+          <button
+            onClick={() => setTab('alerts')}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${tab === 'alerts' ? 'border-navy-600 dark:border-gold-400 text-navy-600 dark:text-gold-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+          >
+            <Bell size={15} /> Job Alerts {alerts.length > 0 && `(${alerts.length})`}
+          </button>
+          <button
+            onClick={() => setTab('profile')}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${tab === 'profile' ? 'border-navy-600 dark:border-gold-400 text-navy-600 dark:text-gold-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+          >
+            <User size={15} /> Profile
+          </button>
         </div>
 
         {/* Applications tab */}
@@ -162,6 +179,63 @@ export default function CandidateDashboard() {
                           <ChevronRight size={16} />
                         </Link>
                       )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Job Alerts tab */}
+        {tab === 'alerts' && (
+          <div>
+            {loadingAlerts ? (
+              <div className="space-y-3">
+                {[...Array(2)].map((_, i) => <div key={i} className="bg-white dark:bg-navy-800 rounded-xl h-16 animate-pulse" />)}
+              </div>
+            ) : alerts.length === 0 ? (
+              <div className="text-center py-16 bg-white dark:bg-navy-800 border border-gray-200 dark:border-gray-700 rounded-xl">
+                <Bell size={36} className="mx-auto text-gray-300 dark:text-gray-600 mb-3" />
+                <p className="font-medium text-gray-600 dark:text-gray-400">No job alerts yet</p>
+                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Browse jobs and click "Save Search" to get daily email alerts.</p>
+                <Link to="/jobs" className="mt-4 inline-block px-4 py-2 bg-navy-800 dark:bg-gold-400 text-white dark:text-navy-900 rounded-lg text-sm font-semibold hover:bg-navy-900 dark:hover:bg-gold-300 transition-colors">
+                  Browse Jobs
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {alerts.map(alert => {
+                  const chips = [
+                    alert.q && `"${alert.q}"`,
+                    alert.location && alert.location,
+                    alert.work_arrangement && alert.work_arrangement,
+                    alert.employment_type && alert.employment_type,
+                    alert.experience_level && `${alert.experience_level} level`,
+                  ].filter(Boolean) as string[]
+                  return (
+                    <div key={alert.id} className="bg-white dark:bg-navy-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex items-center justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm text-gray-900 dark:text-white">{alert.label ?? 'Job Alert'}</p>
+                        <div className="flex flex-wrap gap-1.5 mt-1.5">
+                          {chips.length > 0 ? chips.map(c => (
+                            <span key={c} className="px-2 py-0.5 bg-gray-100 dark:bg-navy-700 text-gray-600 dark:text-gray-300 rounded text-xs">{c}</span>
+                          )) : (
+                            <span className="text-xs text-gray-400">All jobs</span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                          {alert.frequency === 'daily' ? 'Daily digest' : 'Weekly digest'}
+                          {alert.last_sent_at && ` · Last sent ${new Date(alert.last_sent_at).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}`}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteAlert(alert.id)}
+                        className="p-2 text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors shrink-0"
+                        title="Delete alert"
+                      >
+                        <Trash2 size={15} />
+                      </button>
                     </div>
                   )
                 })}

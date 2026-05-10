@@ -70,6 +70,18 @@ export const ApplicationStatusSchema = z.object({
   status: z.enum(['pending', 'reviewed', 'shortlisted', 'rejected', 'hired']),
 })
 
+// ── Job Alert ──
+export const JobAlertSchema = z.object({
+  label: z.string().max(100).optional().nullable(),
+  q: z.string().optional().nullable(),
+  location: z.string().max(200).optional().nullable(),
+  work_arrangement: z.enum(['remote', 'hybrid', 'onsite', 'any']).optional().nullable(),
+  employment_type: z.enum(['full-time', 'part-time', 'contract', 'temp']).optional().nullable(),
+  experience_level: z.enum(['entry', 'mid', 'senior', 'executive']).optional().nullable(),
+  frequency: z.enum(['daily', 'weekly']).default('daily'),
+})
+export type JobAlertInput = z.infer<typeof JobAlertSchema>
+
 // ── Job Filters ──
 export const JobFiltersSchema = z.object({
   q: z.string().optional(),

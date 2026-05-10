@@ -1,6 +1,6 @@
 // client/src/lib/api.ts
 import { supabase } from './supabase'
-import type { ApiResponse, BlogPost, ContactSubmission, DashboardData, Job, Application, EmployerProfile, CandidateProfile } from '@/types'
+import type { ApiResponse, BlogPost, ContactSubmission, DashboardData, Job, Application, EmployerProfile, CandidateProfile, JobAlert } from '@/types'
 
 const API_URL = import.meta.env.VITE_API_URL || '/api'
 
@@ -172,6 +172,24 @@ export async function updateEmployerProfile(data: Partial<EmployerProfile>) {
     method: 'PATCH',
     body: JSON.stringify(data),
   })
+}
+
+// ── Job Alerts API ──
+
+export async function getMyJobAlerts() {
+  return request<JobAlert[]>('/job-alerts')
+}
+
+export async function createJobAlert(data: {
+  label?: string; q?: string; location?: string
+  work_arrangement?: string; employment_type?: string
+  experience_level?: string; frequency?: string
+}) {
+  return request<JobAlert>('/job-alerts', { method: 'POST', body: JSON.stringify(data) })
+}
+
+export async function deleteJobAlert(id: string) {
+  return request(`/job-alerts/${id}`, { method: 'DELETE' })
 }
 
 // ── Candidate Profile API ──

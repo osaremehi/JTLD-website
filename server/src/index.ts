@@ -10,6 +10,8 @@ import adminRoutes from './routes/admin.js'
 import jobsRoutes from './routes/jobs.js'
 import applicationsRoutes from './routes/applications.js'
 import employersRoutes from './routes/employers.js'
+import jobAlertsRoutes from './routes/jobAlerts.js'
+import internalRoutes from './routes/internal.js'
 
 dotenv.config()
 
@@ -49,6 +51,8 @@ app.use('/api/admin', adminRoutes)
 app.use('/api/jobs', publicLimiter, jobsRoutes)
 app.use('/api/applications', applicationsRoutes)
 app.use('/api/employers', employersRoutes)
+app.use('/api/job-alerts', jobAlertsRoutes)
+app.use('/api/internal', internalRoutes)
 
 // ── Health check ──
 app.get('/api/health', (_req, res) => {
