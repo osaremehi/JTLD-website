@@ -29,6 +29,56 @@ export const BlogPostSchema = z.object({
 })
 export type BlogPostInput = z.infer<typeof BlogPostSchema>
 
+// ── Employer Profile ──
+export const EmployerProfileSchema = z.object({
+  company_name: z.string().min(1, 'Company name is required').max(200),
+  industry: z.string().min(1, 'Industry is required').max(100),
+  website: z.string().url('Invalid URL').optional().nullable(),
+  description: z.string().max(2000).optional().nullable(),
+  logo_url: z.string().url('Invalid URL').optional().nullable(),
+  location: z.string().max(200).optional().nullable(),
+})
+export type EmployerProfileInput = z.infer<typeof EmployerProfileSchema>
+
+// ── Job ──
+export const JobSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200),
+  description: z.string().min(1, 'Description is required'),
+  requirements: z.array(z.string()).optional().default([]),
+  skills_required: z.array(z.string()).optional().default([]),
+  location: z.string().min(1, 'Location is required').max(200),
+  work_arrangement: z.enum(['remote', 'hybrid', 'onsite']),
+  employment_type: z.enum(['full-time', 'part-time', 'contract', 'temp']),
+  salary_min: z.coerce.number().positive().optional().nullable(),
+  salary_max: z.coerce.number().positive().optional().nullable(),
+  experience_level: z.enum(['entry', 'mid', 'senior', 'executive']),
+  expires_at: z.string().datetime().optional().nullable(),
+})
+export type JobInput = z.infer<typeof JobSchema>
+
+export const JobStatusSchema = z.object({
+  is_active: z.boolean(),
+})
+
+// ── Application ──
+export const ApplicationSchema = z.object({
+  cover_letter: z.string().max(5000).optional().nullable(),
+})
+export type ApplicationInput = z.infer<typeof ApplicationSchema>
+
+export const ApplicationStatusSchema = z.object({
+  status: z.enum(['pending', 'reviewed', 'shortlisted', 'rejected', 'hired']),
+})
+
+// ── Job Filters ──
+export const JobFiltersSchema = z.object({
+  q: z.string().optional(),
+  location: z.string().optional(),
+  work_arrangement: z.enum(['remote', 'hybrid', 'onsite']).optional(),
+  employment_type: z.enum(['full-time', 'part-time', 'contract', 'temp']).optional(),
+  experience_level: z.enum(['entry', 'mid', 'senior', 'executive']).optional(),
+})
+
 // ── Pagination ──
 export const PaginationSchema = z.object({
   page: z.coerce.number().int().positive().default(1),

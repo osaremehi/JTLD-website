@@ -39,7 +39,7 @@ export default function CareersSignupPage() {
       })
       if (profileError) throw profileError
 
-      navigate('/careers/profile')
+      navigate('/careers/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed')
     } finally {

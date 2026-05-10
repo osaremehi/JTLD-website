@@ -1,15 +1,16 @@
-// client/src/pages/careers/CareersLoginPage.tsx
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import Logo from '@/components/layout/Logo'
 
-export default function CareersLoginPage() {
+export default function EmployerLoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
+  const redirect = (location.state as any)?.redirect || '/employer/dashboard'
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -18,7 +19,7 @@ export default function CareersLoginPage() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) throw error
-      navigate('/careers/dashboard')
+      navigate(redirect)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Invalid credentials')
     } finally {
@@ -33,8 +34,8 @@ export default function CareersLoginPage() {
           <div className="flex justify-center mb-4">
             <Logo className="text-navy-900 dark:text-white" />
           </div>
-          <h1 className="text-xl font-bold text-navy-900 dark:text-white">Candidate Sign In</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Access your career profile</p>
+          <h1 className="text-xl font-bold text-navy-900 dark:text-white">Employer Sign In</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Access your hiring dashboard</p>
         </div>
 
         <form onSubmit={handleSubmit}
@@ -47,7 +48,7 @@ export default function CareersLoginPage() {
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
             <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
               className="w-full px-3.5 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-navy-950 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-navy-500/30 focus:border-navy-500 transition"
-              placeholder="you@example.com" />
+              placeholder="you@company.com" />
           </div>
 
           <div className="mb-6">
@@ -59,16 +60,13 @@ export default function CareersLoginPage() {
 
           <button type="submit" disabled={loading}
             className="w-full py-3.5 rounded-lg font-semibold text-sm bg-navy-800 text-white hover:bg-navy-700 dark:bg-gold-400 dark:text-navy-950 dark:hover:bg-gold-300 disabled:opacity-60 disabled:cursor-not-allowed transition-all">
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Signing in…' : 'Sign In'}
           </button>
         </form>
 
         <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-5">
           Don't have an account?{' '}
-          <Link to="/careers/signup" className="font-semibold text-navy-800 dark:text-gold-400 hover:underline">Create profile</Link>
-        </p>
-        <p className="text-center text-xs text-gray-400 mt-3">
-          <Link to="/careers" className="hover:text-gray-600 dark:hover:text-gray-300 transition">&larr; Back to Careers</Link>
+          <Link to="/employer/signup" className="font-semibold text-navy-800 dark:text-gold-400 hover:underline">Register company</Link>
         </p>
       </div>
     </main>

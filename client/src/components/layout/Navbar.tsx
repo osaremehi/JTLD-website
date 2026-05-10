@@ -79,6 +79,36 @@ const NAV_ITEMS: NavItem[] = [
   },
   { label: 'Blog', href: '/blog' },
   {
+    label: 'Jobs',
+    href: '/jobs',
+    mega: [
+      {
+        heading: 'Find Work',
+        links: [
+          { label: 'Browse All Jobs', href: '/jobs' },
+          { label: 'Remote Jobs', href: '/jobs?work_arrangement=remote' },
+          { label: 'Contract Roles', href: '/jobs?employment_type=contract' },
+        ],
+      },
+      {
+        heading: 'Candidate Portal',
+        links: [
+          { label: 'Create Your Profile', href: '/careers/signup' },
+          { label: 'Candidate Sign In', href: '/careers/login' },
+          { label: 'My Dashboard', href: '/careers/dashboard' },
+        ],
+      },
+      {
+        heading: 'Employers',
+        links: [
+          { label: 'Post a Job', href: '/employer/signup' },
+          { label: 'Employer Sign In', href: '/employer/login' },
+          { label: 'Employer Dashboard', href: '/employer/dashboard' },
+        ],
+      },
+    ],
+  },
+  {
     label: 'Careers',
     href: '/careers',
     mega: [
@@ -95,7 +125,7 @@ const NAV_ITEMS: NavItem[] = [
         links: [
           { label: 'Create Your Profile', href: '/careers/signup' },
           { label: 'Sign In', href: '/careers/login' },
-          { label: 'My Profile & Resumes', href: '/careers/profile' },
+          { label: 'My Dashboard', href: '/careers/dashboard' },
         ],
       },
     ],

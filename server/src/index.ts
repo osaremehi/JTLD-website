@@ -7,6 +7,9 @@ import dotenv from 'dotenv'
 import contactRoutes from './routes/contact.js'
 import blogRoutes from './routes/blog.js'
 import adminRoutes from './routes/admin.js'
+import jobsRoutes from './routes/jobs.js'
+import applicationsRoutes from './routes/applications.js'
+import employersRoutes from './routes/employers.js'
 
 dotenv.config()
 
@@ -43,6 +46,9 @@ app.post('/api/contacts', contactLimiter) // rate-limit public form submission o
 app.use('/api/contacts', contactRoutes)
 app.use('/api/blog', publicLimiter, blogRoutes)
 app.use('/api/admin', adminRoutes)
+app.use('/api/jobs', publicLimiter, jobsRoutes)
+app.use('/api/applications', applicationsRoutes)
+app.use('/api/employers', employersRoutes)
 
 // ── Health check ──
 app.get('/api/health', (_req, res) => {
