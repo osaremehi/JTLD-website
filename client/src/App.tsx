@@ -18,6 +18,15 @@ import CareersPage from '@/pages/CareersPage'
 import CareersLoginPage from '@/pages/careers/CareersLoginPage'
 import CareersSignupPage from '@/pages/careers/CareersSignupPage'
 import CareersProfilePage from '@/pages/careers/CareersProfilePage'
+import CandidateDashboard from '@/pages/careers/CandidateDashboard'
+import ApplyPage from '@/pages/careers/ApplyPage'
+import JobsPage from '@/pages/JobsPage'
+import JobDetailPage from '@/pages/JobDetailPage'
+import EmployerLoginPage from '@/pages/employer/EmployerLoginPage'
+import EmployerSignupPage from '@/pages/employer/EmployerSignupPage'
+import EmployerDashboard from '@/pages/employer/EmployerDashboard'
+import PostJobPage from '@/pages/employer/PostJobPage'
+import JobApplicantsPage from '@/pages/employer/JobApplicantsPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -40,12 +49,32 @@ export default function App() {
       <Route path="/about" element={<><Navbar /><AboutPage /><Footer /></>} />
       <Route path="/industries" element={<><Navbar /><IndustriesPage /><Footer /></>} />
       <Route path="/careers" element={<><Navbar /><CareersPage /><Footer /></>} />
-      <Route path="/careers/login" element={<CareersLoginPage />} />
-      <Route path="/careers/signup" element={<CareersSignupPage />} />
-      <Route path="/careers/profile" element={<CareersProfilePage />} />
       <Route path="/blog" element={<><Navbar /><BlogPage /><Footer /></>} />
       <Route path="/blog/:slug" element={<><Navbar /><BlogPostPage /><Footer /></>} />
       <Route path="/login" element={<LoginPage />} />
+
+      {/* Job board — public */}
+      <Route path="/jobs" element={<><Navbar /><JobsPage /><Footer /></>} />
+      <Route path="/jobs/:slug" element={<><Navbar /><JobDetailPage /><Footer /></>} />
+
+      {/* Candidate auth */}
+      <Route path="/careers/login" element={<CareersLoginPage />} />
+      <Route path="/careers/signup" element={<CareersSignupPage />} />
+
+      {/* Candidate protected */}
+      <Route path="/careers/profile" element={<CareersProfilePage />} />
+      <Route path="/careers/dashboard" element={<><Navbar /><CandidateDashboard /><Footer /></>} />
+      <Route path="/jobs/:slug/apply" element={<><Navbar /><ApplyPage /><Footer /></>} />
+
+      {/* Employer auth */}
+      <Route path="/employer/login" element={<EmployerLoginPage />} />
+      <Route path="/employer/signup" element={<EmployerSignupPage />} />
+
+      {/* Employer protected */}
+      <Route path="/employer/dashboard" element={<><Navbar /><EmployerDashboard /><Footer /></>} />
+      <Route path="/employer/jobs/new" element={<><Navbar /><PostJobPage /><Footer /></>} />
+      <Route path="/employer/jobs/:id/edit" element={<><Navbar /><PostJobPage /><Footer /></>} />
+      <Route path="/employer/jobs/:id/applicants" element={<><Navbar /><JobApplicantsPage /><Footer /></>} />
 
       {/* Admin routes */}
       <Route path="/admin" element={

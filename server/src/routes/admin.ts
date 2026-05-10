@@ -32,6 +32,26 @@ router.get('/dashboard', async (_req, res) => {
       .select('*', { count: 'exact', head: true })
       .eq('status', 'published')
 
+    // Job counts
+    const { count: totalJobs } = await supabase
+      .from('jobs')
+      .select('*', { count: 'exact', head: true })
+
+    const { count: activeJobs } = await supabase
+      .from('jobs')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+
+    // Application counts
+    const { count: totalApplications } = await supabase
+      .from('applications')
+      .select('*', { count: 'exact', head: true })
+
+    const { count: pendingApplications } = await supabase
+      .from('applications')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending')
+
     // Page views in last 30 days
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
     const { count: recentViews } = await supabase
@@ -54,6 +74,10 @@ router.get('/dashboard', async (_req, res) => {
           totalPosts: totalPosts ?? 0,
           publishedPosts: publishedPosts ?? 0,
           pageViews30d: recentViews ?? 0,
+          totalJobs: totalJobs ?? 0,
+          activeJobs: activeJobs ?? 0,
+          totalApplications: totalApplications ?? 0,
+          pendingApplications: pendingApplications ?? 0,
         },
         recentSubmissions: recentSubmissions ?? [],
       },

@@ -2,11 +2,12 @@
 import { Request, Response, NextFunction } from 'express'
 import { supabase } from '../lib/supabase.js'
 
-// Extend Express Request to carry the authenticated user
 declare global {
   namespace Express {
     interface Request {
       user?: { id: string; email: string; role: string }
+      candidate?: { id: string; user_id: string; full_name: string; email: string }
+      employer?: { id: string; user_id: string; company_name: string }
     }
   }
 }
@@ -40,7 +41,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
   req.user = {
     id: data.user.id,
     email: data.user.email ?? '',
-    role: profile?.role ?? 'editor',
+    role: profile?.role ?? 'user',
   }
 
   next()
@@ -55,5 +56,55 @@ export function requireAdmin(req: Request, res: Response, next: NextFunction) {
     res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Admin access required' } })
     return
   }
+  next()
+}
+
+/**
+ * Middleware: require a candidate profile linked to the authenticated user.
+ * Attaches `req.candidate` on success. Must be used after requireAuth.
+ */
+export async function requireCandidate(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Authentication required' } })
+    return
+  }
+
+  const { data: candidate } = await supabase
+    .from('candidates')
+    .select('id, user_id, full_name, email')
+    .eq('user_id', req.user.id)
+    .single()
+
+  if (!candidate) {
+    res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Candidate profile required' } })
+    return
+  }
+
+  req.candidate = candidate
+  next()
+}
+
+/**
+ * Middleware: require an employer profile linked to the authenticated user.
+ * Attaches `req.employer` on success. Must be used after requireAuth.
+ */
+export async function requireEmployer(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Authentication required' } })
+    return
+  }
+
+  const { data: employer } = await supabase
+    .from('employers')
+    .select('id, user_id, company_name')
+    .eq('user_id', req.user.id)
+    .single()
+
+  if (!employer) {
+    res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Employer profile required' } })
+    return
+  }
+
+  req.employer = employer
   next()
 }

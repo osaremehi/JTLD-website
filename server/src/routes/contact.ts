@@ -1,6 +1,7 @@
 // server/src/routes/contact.ts
 import { Router } from 'express'
 import { supabase } from '../lib/supabase.js'
+import { sendContactConfirmation } from '../lib/email.js'
 import { ContactSchema, ContactStatusSchema, PaginationSchema } from '../types/index.js'
 import { validate } from '../middleware/validate.js'
 import { requireAuth, requireAdmin } from '../middleware/auth.js'
@@ -23,6 +24,13 @@ router.post('/', validate(ContactSchema), async (req, res) => {
     }
 
     res.status(201).json({ data })
+
+    // Send confirmation email async (non-blocking)
+    sendContactConfirmation({
+      firstName: req.body.first_name,
+      email: req.body.email,
+      service: req.body.service,
+    }).catch(err => console.error('Contact confirmation email error:', err))
   } catch (err) {
     console.error('Contact route error:', err)
     res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Internal server error' } })
